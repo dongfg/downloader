@@ -1,0 +1,39 @@
+name: Cleanup Expired Releases
+
+on:
+  # 定时运行：每天 UTC 时间 00:00 运行 (北京时间早上 8:00)
+  schedule:
+    - cron: '0 0 * * *'
+  
+  # 允许手动触发 (方便测试)
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry Run (Check only, do not delete)'
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # 必须：允许删除 release 和 tag
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Run Cleanup
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if [[ "${{ inputs.dry_run }}" == "true" ]]; then
+            ./cleanup_releases.sh --dry-run
+          else
+            ./cleanup_releases.sh
+          fi
