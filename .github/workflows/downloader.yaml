@@ -53,6 +53,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ github.run_number }} 
-          name: Auto Release ${{ github.run_number }}
-          body: {"file_name": "${{ env.FILE_NAME }}", "expire_days": "${{ inputs.expire_days }}" }
-          files: ${{ env.FILE_LIST }}          
+          name: Auto Release ${{ inputs.description }}
+          body: '{"file_name": "${{ env.FILE_NAME }}", "expire_days": "${{ inputs.expire_days }}", "description": "${{ inputs.description }}"}'
+          files: ${{ env.FILE_LIST }}
