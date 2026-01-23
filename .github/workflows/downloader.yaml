@@ -1,0 +1,58 @@
+name: Downloader
+
+on:
+  workflow_dispatch:
+    inputs:
+      description:
+        description: '文件说明'
+        type: string
+        required: true    
+      download_url:
+        description: '文件实际下载地址'
+        type: string
+        required: true
+      password:
+        description: '加密密码, 默认为空，不加密'
+        type: string
+        required: false
+      expire_days:
+        description: '文件保留天数'
+        required: true
+        default: '1'
+        type: choice
+        options:
+          - 1
+          - 3
+          - 7
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y p7zip-full curl
+
+      - name: Download
+        id: run_script
+        run: |
+          ./download.sh "${{ inputs.download_url }}" "${{ inputs.password }}"
+
+      - name: Check Output
+        run: |
+          echo "Filename: $FILE_NAME"
+          echo "File List: $FILE_LIST"
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ github.run_number }} 
+          name: Auto Release ${{ github.run_number }}
+          body: {"file_name": "${{ env.FILE_NAME }}", "expire_days": "${{ inputs.expire_days }}" }
+          files: ${{ env.FILE_LIST }}          
