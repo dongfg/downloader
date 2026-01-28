@@ -9,7 +9,7 @@ INPUT_PASS="$3"
 # 检查必要参数
 if [ -z "$INPUT_URL" ]; then
   echo "Error: URL is required."
-  echo "Usage: ./download.sh <url> [password]"
+  echo "Usage: ./download.sh <url> <split_1g> [password]"
   exit 1
 fi
 
