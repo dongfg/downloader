@@ -24,6 +24,14 @@ on:
           - 1
           - 3
           - 7
+      split_1g:
+        description: '拆分超过1G的文件'
+        required: true
+        default: 'no'
+        type: choice
+        options:
+          - yes
+          - no
 
 jobs:
   download:
@@ -42,7 +50,7 @@ jobs:
       - name: Download
         id: run_script
         run: |
-          ./download.sh "${{ inputs.download_url }}" "${{ inputs.password }}"
+          ./download.sh "${{ inputs.download_url }}" "${{ inputs.split_1g }}" "${{ inputs.password }}"
 
       - name: Check Output
         run: |

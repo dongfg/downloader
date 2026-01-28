@@ -3,7 +3,8 @@ set -e  # 遇到错误立即退出
 
 # 获取参数
 INPUT_URL="$1"
-INPUT_PASS="$2"
+INPUT_SPLIT="$2"
+INPUT_PASS="$3"
 
 # 检查必要参数
 if [ -z "$INPUT_URL" ]; then
@@ -56,12 +57,13 @@ if [ -n "$INPUT_PASS" ]; then
 fi
 
 # 分卷处理 (1GB = 1073741824 bytes)
-if [ "$FILE_SIZE" -gt 1073741824 ]; then
+# INPUT_SPLIT must equals yes
+if [[ "$FILE_SIZE" -gt 1073741824 && "$INPUT_SPLIT" == "yes" ]]; then
   echo "File > 1GB. Splitting archive..."
   CMD_7Z="$CMD_7Z -v1g"
 fi
 
-ARCHIVE_NAME="${FILE_NAME}.7z"
+ARCHIVE_NAME="${GITHUB_RUN_NUMBER}.7z"
 
 echo "Compressing..."
 # eval 用于正确处理带引号的参数
@@ -87,6 +89,7 @@ if [ -n "$GITHUB_ENV" ]; then
     echo "Writing to GITHUB_ENV..."
     
     # 写入 FILE_NAME
+    echo "FILE_URL=$INPUT_URL" >> "$GITHUB_ENV"
     echo "FILE_NAME=$FILE_NAME" >> "$GITHUB_ENV"
     
     # 写入 FILE_LIST (多行变量)
