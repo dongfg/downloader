@@ -58,7 +58,7 @@ fi
 
 # 分卷处理 (1GB = 1073741824 bytes)
 # INPUT_SPLIT must equals yes
-if [[ "$FILE_SIZE" -gt 1073741824 && "$INPUT_SPLIT" == "yes" ]]; then
+if [[ "$FILE_SIZE" -gt 1073741824 && ("$INPUT_SPLIT" == "yes" || "$INPUT_SPLIT" == "true") ]]; then
   echo "File > 1GB. Splitting archive..."
   CMD_7Z="$CMD_7Z -v1g"
 fi
